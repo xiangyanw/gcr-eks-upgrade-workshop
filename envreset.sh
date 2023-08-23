@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export EKS_CLUSTER_NAME="eks-workshop"
+#export EKS_CLUSTER_NAME="eks-workshop"
 export ACCOUNT_ID=`aws sts get-caller-identity --query 'Account' --output text`
 
 WRK_DIR=`dirname $0`
