@@ -72,6 +72,11 @@ EOF
 
 eksctl create nodegroup -f node-group.yaml
 
+if [[ $? -ne 0 ]]; then
+  echo "Failed to create node group: tomcat."
+  exit 1
+fi
+
 aws eks wait nodegroup-active --cluster-name $EKS_CLUSTER_NAME --nodegroup-name tomcat --region $AWS_REGION
 
 eksctl scale nodegroup --name default --nodes 0 --nodes-min 0 --cluster $EKS_CLUSTER_NAME --region $AWS_REGION
