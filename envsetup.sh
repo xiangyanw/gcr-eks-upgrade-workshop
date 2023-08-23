@@ -14,7 +14,7 @@ WRK_DIR=`dirname $0`
 cd ${WRK_DIR}
 
 # Update kubectl version
-curl -LO https://dl.k8s.io/release/v1.24.0/bin/linux/amd64/kubectl
+curl -LO https://dl.k8s.io/release/v1.25.0/bin/linux/amd64/kubectl
 sudo mv kubectl /usr/local/bin/
 chmod +x /usr/local/bin/kubectl
 
