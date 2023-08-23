@@ -6,8 +6,8 @@ if [[ ! -d ~/.bashrc.d/ ]]; then
   mkdir ~/.bashrc.d
 fi
 
-echo "export EKS_CLUSTER_NAME=\"eks-workshop\"" > ~/.bashrc.d/envvars.bash
-echo "export ACCOUNT_ID=\"$ACCOUNT_ID\"" >> ~/.bashrc.d/envvars.bash
+#echo "export EKS_CLUSTER_NAME=\"eks-workshop\"" > ~/.bashrc.d/envvars.bash
+echo "export ACCOUNT_ID=\"$ACCOUNT_ID\"" > ~/.bashrc.d/envvars.bash
 source ~/.bashrc.d/envvars.bash
 
 WRK_DIR=`dirname $0`
