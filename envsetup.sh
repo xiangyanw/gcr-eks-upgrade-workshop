@@ -43,7 +43,7 @@ managedNodeGroups:
   minSize: 0
   maxSize: 3
   instanceType: m5.large
-  spot: true
+  #spot: true
   privateNetworking: true
   iam:
     attachPolicyARNs:
@@ -60,7 +60,7 @@ managedNodeGroups:
   minSize: 0
   maxSize: 2
   instanceType: t3.medium
-  spot: true
+  #spot: true
   privateNetworking: true
   labels:
     app: tomcat
@@ -408,7 +408,7 @@ spec:
     args:
     - run
     - --http-debug=headers
-    - --duration=60m
+    - --duration=120m
     - /home/k6/script.js
     volumeMounts:
     - name: k6script
@@ -421,6 +421,30 @@ spec:
   restartPolicy: Never
 EOF
 
-kubectl delete pod k6; kubectl apply -f apps/k6.yaml
-kubectl wait --for=condition=Ready pod/k6
-kubectl logs -f k6
+# Prepare kubeconfig file
+cp -f ~/.kube/config ~/environment/kubeconfig
+sed -i 's/client.authentication.k8s.io\/v1beta1/client.authentication.k8s.io\/v1alpha1/' \
+  ~/environment/kubeconfig
+
+# Install HPA
+cat <<EOF > apps/hpa.yaml
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: fake-hpa
+  namespace: default
+  labels:
+    eventing.knative.dev/release: "v1.2.0"
+    app.kubernetes.io/component: fake-apps
+    app.kubernetes.io/version: "1.2.0"
+    app.kubernetes.io/name: fake-apps
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: fake-deployment
+  minReplicas: 1
+  maxReplicas: 5
+EOF
+
+kubectl apply -f apps/hpa.yaml

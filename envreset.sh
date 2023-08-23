@@ -10,6 +10,7 @@ kubectl delete -f apps/k6.yaml
 kubectl delete -f apps/nginx.yaml
 kubectl delete -f apps/tomcat.yaml
 kubectl delete -f apps/namespaces.yaml
+kubectl delete -f apps/hpa.yam
 
 eksctl delete iamserviceaccount --name aws-load-balancer-controller --namespace kube-system \
   --cluster ${EKS_CLUSTER_NAME} --region ${AWS_REGION}
@@ -21,8 +22,13 @@ eksctl delete nodegroup \
   --cluster ${EKS_CLUSTER_NAME} \
   --region ${AWS_REGION}
 
-eksctl scale nodegroup --name tomcat --nodes 1 --cluster ${EKS_CLUSTER_NAME} --region ${AWS_REGION}
+# eksctl scale nodegroup --name tomcat --nodes 1 --cluster ${EKS_CLUSTER_NAME} --region ${AWS_REGION}
+# aws eks wait nodegroup-active --cluster-name $EKS_CLUSTER_NAME --nodegroup-name tomcat
 
-# eksctl delete nodegroup --name tomcat --cluster ${EKS_CLUSTER_NAME} --region ${AWS_REGION}
+eksctl scale nodegroup --name default --nodes 3 --cluster ${EKS_CLUSTER_NAME} --region ${AWS_REGION}
+aws eks wait nodegroup-active --cluster-name $EKS_CLUSTER_NAME --nodegroup-name default
 
-aws eks wait nodegroup-active --cluster-name $EKS_CLUSTER_NAME --nodegroup-name tomcat
+eksctl delete nodegroup --name tomcat --cluster ${EKS_CLUSTER_NAME} --region ${AWS_REGION}
+eksctl delete nodegroup --name lbc --cluster ${EKS_CLUSTER_NAME} --region ${AWS_REGION}
+eksctl delete nodegroup --name umng --cluster ${EKS_CLUSTER_NAME} --region ${AWS_REGION}
+
