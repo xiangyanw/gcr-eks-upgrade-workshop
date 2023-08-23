@@ -20,7 +20,7 @@ export POLICY_NAME="AWSLoadBalancerControllerIAMPolicy"
 
 PN=`aws iam get-policy --policy-arn "arn:aws:iam::${ACCOUNT_ID}:policy/${POLICY_NAME}" --query "Policy.PolicyName"`
 
-if [[ -z $"{PN}" ]]; then
+if [[ -z "${PN}" ]]; then
   aws iam create-policy \
       --policy-name ${POLICY_NAME} \
       --policy-document file://lbc_iam_policy.json
