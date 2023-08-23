@@ -73,7 +73,7 @@ EOF
 eksctl create nodegroup -f node-group.yaml
 
 if [[ $? -ne 0 ]]; then
-  echo "Failed to create node group: tomcat."
+  echo "Failed to create node groups."
   exit 1
 fi
 
