@@ -13,6 +13,11 @@ source ~/.bashrc.d/envvars.bash
 WRK_DIR=`dirname $0`
 cd ${WRK_DIR}
 
+# Update kubectl version
+curl -LO https://dl.k8s.io/release/v1.24.0/bin/linux/amd64/kubectl
+sudo mv kubectl /usr/local/bin/
+chmod +x /usr/local/bin/kubectl
+
 # Create AWS Load Balancer Controller IAM Policy
 curl -o lbc_iam_policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.5.4/docs/install/iam_policy.json
 
@@ -21,6 +26,7 @@ export POLICY_NAME="AWSLoadBalancerControllerIAMPolicy"
 PN=`aws iam get-policy --policy-arn "arn:aws:iam::${ACCOUNT_ID}:policy/${POLICY_NAME}" --query "Policy.PolicyName"`
 
 if [[ -z "${PN}" ]]; then
+  echo "Policy AWSLoadBalancerControllerIAMPolicy is not found, creating ..."
   aws iam create-policy \
       --policy-name ${POLICY_NAME} \
       --policy-document file://lbc_iam_policy.json
