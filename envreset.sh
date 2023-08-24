@@ -12,10 +12,8 @@ kubectl delete -f ~/environment/apps/tomcat.yaml
 kubectl delete -f ~/environment/apps/namespaces.yaml
 kubectl delete -f ~/environment/apps/hpa.yam
 
-kubectl delete ingress ingress-httpd
+kubectl delete -f ~/environment/long-live-connection-demo/
 kubectl delete -f ~/environment/ingress-nginx-1.5.1.yaml
-kubectl delete deployment httpd
-kubectl delete svc httpd
 
 eksctl delete iamserviceaccount --name aws-load-balancer-controller --namespace kube-system \
   --cluster ${EKS_CLUSTER_NAME} --region ${AWS_REGION}
