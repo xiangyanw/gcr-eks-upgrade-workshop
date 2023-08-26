@@ -69,9 +69,9 @@ if [[ ! -z "${ARN}" ]]; then
   eksctl delete nodegroup --name lbc --cluster ${EKS_CLUSTER_NAME} --region ${AWS_REGION}
 fi
 
-ARN=$(aws eks describe-nodegroup --nodegroup-name umng --cluster-name ${EKS_CLUSTER_NAME} --region ${AWS_REGION} --query 'nodegroup.nodegroupArn')
+eksctl get nodegroup --name umng --cluster ${EKS_CLUSTER_NAME} --region ${AWS_REGION}
 
-if [[ ! -z "${ARN}" ]]; then
+if [[ $? -eq 0 ]]; then
   echo "Deleting nodegroup umng ..."
   eksctl delete nodegroup --name umng --cluster ${EKS_CLUSTER_NAME} --region ${AWS_REGION}
 fi
