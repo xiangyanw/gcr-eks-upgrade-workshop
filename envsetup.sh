@@ -33,6 +33,29 @@ if [[ -z "${PN}" ]]; then
 else
   echo "Policy ${POLICY_NAME} already exists"
 fi
+
+# Prepare VPI ID and subnet IDs
+export VPC_ID=$(eksctl get cluster --name ${EKS_CLUSTER_NAME} \
+  --region ${AWS_REGION} \
+  -o json | jq -r '.[0].ResourcesVpcConfig.VpcId')
+   
+export SUBNETa=$(aws ec2 describe-subnets \
+  --filters Name=vpc-id,Values=$VPC_ID \
+  Name=tag:kubernetes.io/role/internal-elb,Values=1 \
+  Name=availability-zone,Values="${AWS_REGION}"a \
+  --query 'Subnets[*].SubnetId' --output text)
+  
+export SUBNETb=$(aws ec2 describe-subnets \
+  --filters Name=vpc-id,Values=$VPC_ID \
+  Name=tag:kubernetes.io/role/internal-elb,Values=1 \
+  Name=availability-zone,Values="${AWS_REGION}"b \
+  --query 'Subnets[*].SubnetId' --output text)
+  
+export SUBNETc=$(aws ec2 describe-subnets \
+  --filters Name=vpc-id,Values=$VPC_ID \
+  Name=tag:kubernetes.io/role/internal-elb,Values=1 \
+  Name=availability-zone,Values="${AWS_REGION}"c \
+  --query 'Subnets[*].SubnetId' --output text)
     
 # Create EFS node group
 cat << EOF > node-group.yaml
@@ -42,6 +65,17 @@ kind: ClusterConfig
 metadata:
   name: ${EKS_CLUSTER_NAME}
   region: ${AWS_REGION}
+  
+vpc:
+  id: "$VPC_ID"
+  subnets:
+    private:
+      ${AWS_REGION}a:
+        id: "$SUBNETa"
+      ${AWS_REGION}b:
+        id: "$SUBNETb"
+      ${AWS_REGION}c:
+        id: "$SUBNETc"
 
 managedNodeGroups:
 - name: lbc
@@ -68,6 +102,8 @@ managedNodeGroups:
   instanceType: t3.medium
   #spot: true
   privateNetworking: true
+  subnets:
+  - ${AWS_REGION}a
   labels:
     app: tomcat
   taints:
