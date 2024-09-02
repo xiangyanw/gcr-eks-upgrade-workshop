@@ -21,7 +21,7 @@ chmod +x /usr/local/bin/kubectl
 # Update eksctl version
 curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
 chmod +x /tmp/eksctl
-mv -f /tmp/eksctl /usr/local/bin
+sudo mv -f /tmp/eksctl /usr/local/bin
 
 # Create AWS Load Balancer Controller IAM Policy
 curl -o lbc_iam_policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.5.4/docs/install/iam_policy.json
